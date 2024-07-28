@@ -7,11 +7,13 @@ class CommitMessagePrefix(str, Enum):
     FEAT = "feat"
     FIX = "fix"
 
+
 class CommitType(str, Enum):
     BREAKING = "breaking"
     FEATURE = "feature"
     FIX = "fix"
     OTHER = "other"
+
 
 MESSAGE_PREFIX_TO_COMMIT_TYPE: Dict[CommitMessagePrefix, CommitType] = {
     CommitMessagePrefix.BREAKING: CommitType.BREAKING,

@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
-import sys
-import json
-from constants import WORKSPACE_ROOT
-sys.path.append(WORKSPACE_ROOT)
-import requests
-from requests import Response, HTTPError, RequestException
-import subprocess
 from subprocess import CompletedProcess
-from src.modules.constants import LOGGER, REPO_OWNER, REPO_NAME, GITHUB_TOKEN
+import subprocess
+from requests import Response, HTTPError, RequestException
+import requests
+import json
+import os
+import sys
+WORKSPACE_ROOT: str = os.path.abspath(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+sys.path.append(WORKSPACE_ROOT)
 from src.modules.types import CommitType, MESSAGE_PREFIX_TO_COMMIT_TYPE
+from src.modules.constants import LOGGER, REPO_OWNER, REPO_NAME, GITHUB_TOKEN
 
 
 def get_latest_commit_msg() -> str:
     git_log: CompletedProcess = subprocess.run(
         [
-        "git",
-        "log",
-        "-1",
-        "--pretty=%B"
+            "git",
+            "log",
+            "-1",
+            "--pretty=%B"
         ],
         shell=False,
         capture_output=True
@@ -30,7 +32,8 @@ def get_latest_commit_msg() -> str:
 
 def get_commit_type(commit_msg: str) -> str:
     msg_prefix: str = commit_msg.split(":")[0]
-    commit_type: str = MESSAGE_PREFIX_TO_COMMIT_TYPE.get(msg_prefix, CommitType.OTHER)
+    commit_type: str = MESSAGE_PREFIX_TO_COMMIT_TYPE.get(
+        msg_prefix, CommitType.OTHER)
 
     return commit_type
 
@@ -51,7 +54,8 @@ def get_current_version() -> str:
 
 
 def increment_version(curr_version: str, latest_commit_type: CommitType) -> str:
-    major_version, minor_version, patch_version = map(int, curr_version.lstrip("v").split("."))
+    major_version, minor_version, patch_version = map(
+        int, curr_version.lstrip("v").split("."))
 
     if latest_commit_type == CommitType.BREAKING:
         major_version += 1
@@ -59,10 +63,11 @@ def increment_version(curr_version: str, latest_commit_type: CommitType) -> str:
         minor_version += 1
     elif latest_commit_type == CommitType.FIX:
         patch_version += 1
-    
+
     new_version: str = f"v{major_version}.{minor_version}.{patch_version}"
 
     return new_version
+
 
 def update_current_version(new_version: str) -> Response:
     response: Response = requests.patch(
@@ -79,9 +84,11 @@ def update_current_version(new_version: str) -> Response:
     )
 
     if response.status_code >= 400:
-        raise HTTPError(f"{response.status_code} {response.reason}: {response.text}")
+        raise HTTPError(
+            f"{response.status_code} {response.reason}: {response.text}")
     elif response.status_code >= 300:
-        raise RequestException(f"{response.status_code} {response.reason}: {response.text}")
+        raise RequestException(
+            f"{response.status_code} {response.reason}: {response.text}")
 
     return response
 
@@ -93,14 +100,17 @@ def main():
     latest_commit_type: str = get_commit_type(latest_commit_msg)
     LOGGER.info(f"Latest commit type: {latest_commit_type}")
 
-    LOGGER.info(f"Calling GitHub API to get current release version for {REPO_OWNER}/{REPO_NAME}")
+    LOGGER.info(
+        f"Calling GitHub API to get current release version for {REPO_OWNER}/{REPO_NAME}")
     curr_version: str = get_current_version()
     LOGGER.info(f"Latest release version: {curr_version}")
 
     new_version: str = increment_version(curr_version, latest_commit_type)
-    LOGGER.info(f"Calling GitHub API to update release version for {REPO_OWNER}/{REPO_NAME} to {new_version}...")
+    LOGGER.info(
+        f"Calling GitHub API to update release version for {REPO_OWNER}/{REPO_NAME} to {new_version}...")
     update_version_response: Response = update_current_version(new_version)
-    LOGGER.info(f"Received the following response from GitHub: {update_version_response.status_code}")
+    LOGGER.info(
+        f"Received the following response from GitHub: {update_version_response.status_code}")
     LOGGER.info(f"Successfully incremented release version to {new_version}!")
 
 

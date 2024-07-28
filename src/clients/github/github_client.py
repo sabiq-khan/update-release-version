@@ -18,12 +18,14 @@ class GitHubClient:
         response: Response = api_request_method()
 
         if response.status_code >= 400:
-            raise HTTPError(f"{response.status_code} {response.reason}: {response.text}")
+            raise HTTPError(
+                f"{response.status_code} {response.reason}: {response.text}")
         elif response.status_code >= 300:
-            raise RequestException(f"{response.status_code} {response.reason}: {response.text}")
+            raise RequestException(
+                f"{response.status_code} {response.reason}: {response.text}")
 
         return response
-    
+
     def get_repository_actions_variable(self, repo_owner: str, repo_name: str, variable: str) -> Response:
         def _get_repository_actions_variable() -> Response:
             response: Response = requests.get(
@@ -32,11 +34,12 @@ class GitHubClient:
             )
 
             return response
-        
-        response: Response = self._handle_api_request(_get_repository_actions_variable)
+
+        response: Response = self._handle_api_request(
+            _get_repository_actions_variable)
 
         return response
-    
+
     def update_repository_actions_variable(self, repo_owner: str, repo_name: str, variable: str, new_value: str) -> Response:
         def _update_repository_actions_variable():
             response: Response = requests.patch(
@@ -50,6 +53,7 @@ class GitHubClient:
 
             return response
 
-        response: Response = self._handle_api_request(_update_repository_actions_variable)
+        response: Response = self._handle_api_request(
+            _update_repository_actions_variable)
 
         return response

@@ -2,8 +2,6 @@ import sys
 import os
 from logging import Logger, StreamHandler, Formatter, INFO
 
-WORKSPACE_ROOT: str = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
 LOGGER: Logger = Logger("update_release_version")
 LOGGER.setLevel(INFO)
 HANDLER = StreamHandler(sys.stdout)
