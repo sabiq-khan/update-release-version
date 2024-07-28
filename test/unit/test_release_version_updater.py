@@ -41,19 +41,31 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         commit_msg: str = "breaking: Deprecated legacy API endpoint"
         commit_type: CommitType = self.release_version_updater._get_commit_type(commit_msg)
 
-        assert commit_type == CommitType.BREAKING
+        assert commit_type == CommitType.MAJOR
     
     def test_get_commit_type_feature(self):
         commit_msg: str = "feat: Implemented new API endpoint"
         commit_type: CommitType = self.release_version_updater._get_commit_type(commit_msg)
 
-        assert commit_type == CommitType.FEATURE
+        assert commit_type == CommitType.MINOR
 
     def test_get_commit_type_fix(self):
         commit_msg: str = "fix: Fixed bug"
         commit_type: CommitType = self.release_version_updater._get_commit_type(commit_msg)
 
-        assert commit_type == CommitType.FIX
+        assert commit_type == CommitType.PATCH
+
+    def test_get_commit_type_refactor(self):
+        commit_msg: str = "refactor: Removed redundant code"
+        commit_type: CommitType = self.release_version_updater._get_commit_type(commit_msg)
+
+        assert commit_type == CommitType.PATCH
+
+    def test_get_commit_type_performance(self):
+        commit_msg: str = "perf: Removed redundant code"
+        commit_type: CommitType = self.release_version_updater._get_commit_type(commit_msg)
+
+        assert commit_type == CommitType.PATCH
     
     def test_get_commit_type_other(self):
         commit_msg: str = "Created files"
@@ -82,23 +94,23 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         )
         assert version == "v1.0.0"
 
-    def test_increment_version_breaking(self):
+    def test_increment_version_major(self):
         curr_version: str = "v1.0.0"
-        latest_commit_type: str = CommitType.BREAKING
+        latest_commit_type: str = CommitType.MAJOR
         new_version: str = self.release_version_updater._increment_version(curr_version, latest_commit_type)
 
         assert new_version == "v2.0.0"
 
-    def test_increment_version_feature(self):
+    def test_increment_version_minor(self):
         curr_version: str = "v1.0.0"
-        latest_commit_type: str = CommitType.FEATURE
+        latest_commit_type: str = CommitType.MINOR
         new_version: str = self.release_version_updater._increment_version(curr_version, latest_commit_type)
 
         assert new_version == "v1.1.0"
 
-    def test_increment_version_fix(self):
+    def test_increment_version_patch(self):
         curr_version: str = "v1.0.0"
-        latest_commit_type: str = CommitType.FIX
+        latest_commit_type: str = CommitType.PATCH
         new_version: str = self.release_version_updater._increment_version(curr_version, latest_commit_type)
 
         assert new_version == "v1.0.1"
@@ -128,21 +140,21 @@ class TestReleaseVersionUpdater(unittest.TestCase):
 
         self.release_version_updater.update_release_version()
 
-        if latest_commit_type == CommitType.BREAKING:
+        if latest_commit_type == CommitType.MAJOR:
             self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v2.0.0"
             )
-        elif latest_commit_type == CommitType.FEATURE:
+        elif latest_commit_type == CommitType.MINOR:
             self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v1.1.0"
             )
-        elif latest_commit_type == CommitType.FIX:
+        elif latest_commit_type == CommitType.PATCH:
             self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
