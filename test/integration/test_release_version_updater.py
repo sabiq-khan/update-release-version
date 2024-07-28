@@ -47,7 +47,7 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         elif latest_commit_type == CommitType.FEATURE:
             assert updated_version_number == "v1.1.0"
         elif latest_commit_type == CommitType.FIX:
-            assert updated_version_number == "v1.0.0"
+            assert updated_version_number == "v1.0.1"
         elif latest_commit_type == CommitType.OTHER:
             assert updated_version_number == EXPECTED_INITIAL_VALUE
 
