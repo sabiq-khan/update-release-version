@@ -39,15 +39,15 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         self.release_version_updater.update_release_version()
 
         latest_commit_msg: str = self.release_version_updater._get_latest_commit_msg()
-        latest_commit_type: str = self.release_version_updater._get_commit_type(latest_commit_msg)
+        latest_commit_type: CommitType = self.release_version_updater._get_commit_type(latest_commit_msg)
         updated_version_number: str = self.release_version_updater._get_current_version()
 
-        if latest_commit_type == CommitType.BREAKING:
+        if latest_commit_type == CommitType.MAJOR:
             assert updated_version_number == "v2.0.0"
-        elif latest_commit_type == CommitType.FEATURE:
+        elif latest_commit_type == CommitType.MINOR:
             assert updated_version_number == "v1.1.0"
-        elif latest_commit_type == CommitType.FIX:
-            assert updated_version_number == "v1.0.0"
+        elif latest_commit_type == CommitType.PATCH:
+            assert updated_version_number == "v1.0.1"
         elif latest_commit_type == CommitType.OTHER:
             assert updated_version_number == EXPECTED_INITIAL_VALUE
 

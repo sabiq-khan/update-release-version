@@ -37,9 +37,9 @@ class ReleaseVersionUpdater:
 
         return commit_msg
 
-    def _get_commit_type(self, commit_msg: str) -> str:
+    def _get_commit_type(self, commit_msg: str) -> CommitType:
         msg_prefix: str = commit_msg.split(":")[0]
-        commit_type: str = MESSAGE_PREFIX_TO_COMMIT_TYPE.get(
+        commit_type: CommitType = MESSAGE_PREFIX_TO_COMMIT_TYPE.get(
             msg_prefix, CommitType.OTHER)
 
         return commit_type
@@ -59,11 +59,11 @@ class ReleaseVersionUpdater:
         major_version, minor_version, patch_version = map(
             int, curr_version.lstrip("v").split("."))
 
-        if latest_commit_type == CommitType.BREAKING:
+        if latest_commit_type == CommitType.MAJOR:
             major_version += 1
-        elif latest_commit_type == CommitType.FEATURE:
+        elif latest_commit_type == CommitType.MINOR:
             minor_version += 1
-        elif latest_commit_type == CommitType.FIX:
+        elif latest_commit_type == CommitType.PATCH:
             patch_version += 1
 
         new_version: str = f"v{major_version}.{minor_version}.{patch_version}"
@@ -75,7 +75,7 @@ class ReleaseVersionUpdater:
             self.logger.info(f"Checking latest commit for {self.repo_owner}/{self.repo_name}...")
             latest_commit_msg: str = self._get_latest_commit_msg()
             self.logger.info(f"Latest commit message: {latest_commit_msg}")
-            latest_commit_type: str = self._get_commit_type(latest_commit_msg)
+            latest_commit_type: CommitType = self._get_commit_type(latest_commit_msg)
             self.logger.info(f"Latest commit type: {latest_commit_type}")
 
             self.logger.info(
