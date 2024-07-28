@@ -84,10 +84,10 @@ class TestReleaseVersionUpdater(unittest.TestCase):
                 "updated_at": "2022-01-10T14:59:22Z"
             }
         )
-        self.release_version_updater.github_client.get_repository_actions_variable.return_value = mock_response
+        self.release_version_updater.github_client.get_repository_variable.return_value = mock_response
         
         version: str = self.release_version_updater._get_current_release_version()
-        self.release_version_updater.github_client.get_repository_actions_variable.assert_called_once_with(
+        self.release_version_updater.github_client.get_repository_variable.assert_called_once_with(
             repo_owner=MOCK_REPO_OWNER,
             repo_name=MOCK_REPO_NAME,
             variable=MOCK_REPO_VARIABLE
@@ -136,33 +136,33 @@ class TestReleaseVersionUpdater(unittest.TestCase):
                 "updated_at": "2022-01-10T14:59:22Z"
             }
         )
-        self.release_version_updater.github_client.get_repository_actions_variable.return_value = mock_response
+        self.release_version_updater.github_client.get_repository_variable.return_value = mock_response
 
         self.release_version_updater.update_release_version()
 
         if latest_commit_type == CommitType.MAJOR:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
+            self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v2.0.0"
             )
         elif latest_commit_type == CommitType.MINOR:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
+            self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v1.1.0"
             )
         elif latest_commit_type == CommitType.PATCH:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
+            self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v1.0.1"
             )
         elif latest_commit_type == CommitType.OTHER:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_not_called()
+            self.release_version_updater.github_client.update_repository_variable.assert_not_called()
 
 
 if __name__ == "__main__":

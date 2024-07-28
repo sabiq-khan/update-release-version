@@ -71,7 +71,7 @@ class ReleaseVersionUpdater:
         return commit_type
 
     def _get_current_release_version(self) -> str:
-        response: Response = self.github_client.get_repository_actions_variable(
+        response: Response = self.github_client.get_repository_variable(
             repo_owner=self.repo_owner,
             repo_name=self.repo_name,
             variable=self.repo_variable
@@ -114,7 +114,7 @@ class ReleaseVersionUpdater:
             if incremented_version != curr_release_version:
                 self.logger.info(
                     f"Calling GitHub API to update release version for {self.repo_owner}/{self.repo_name} to {incremented_version}...")
-                response: Response = self.github_client.update_repository_actions_variable(
+                response: Response = self.github_client.update_repository_variable(
                     repo_owner=self.repo_owner,
                     repo_name=self.repo_name,
                     variable=self.repo_variable,

@@ -24,7 +24,7 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         )
 
     def tearDown(self):
-        self.github_client.update_repository_actions_variable(
+        self.github_client.update_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
             variable=REPO_VARIABLE,
