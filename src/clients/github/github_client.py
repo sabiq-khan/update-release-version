@@ -41,7 +41,7 @@ class GitHubClient:
         return response
 
     def update_repository_actions_variable(self, repo_owner: str, repo_name: str, variable: str, new_value: str) -> Response:
-        def _update_repository_actions_variable():
+        def _update_repository_actions_variable() -> Response:
             response: Response = requests.patch(
                 url=f"{self.base_uri}/repos/{repo_owner}/{repo_name}/actions/variables/{variable}",
                 headers=self.headers,

@@ -14,7 +14,33 @@ from src.clients.github.github_client import GitHubClient
 
 
 class ReleaseVersionUpdater:
+    """
+    Increments the semantic release version of a specified GitHub repository.
+
+    Requires that the release version is being stored in a repository variable.
+    Also requires that the release version has the format f"v{major_version}.{minor_version}.{patch_version}".
+
+    Tries to determine which digit to increment based on the prefix of the latest commit, see https://www.conventionalcommits.org/en/v1.0.0/
+
+    Commits that break backwards compatibility result in a major version increment.
+    Commits that add non-breaking features result in a minor version increment.
+    Commits for bug fixes, refactoring, or performance improvements result in patch version increments.
+    All other commits do not result in any release version increment.
+    """
     def __init__(self, logger: Logger, repo_owner: str, repo_name: str, repo_variable: str, github_client: GitHubClient):
+        """
+        Arguments:
+
+        logger (Logger) - An instance of logging.Logger
+        
+        repo_variable (str) - GitHub repository variable storing current release version
+        
+        repo_name (str) - GitHub repo where release version must be incremented
+        
+        repo_owner (str) - GitHub username of the account that owns the repo
+        
+        github_client (GitHubClient) - An instance of src.clients.github.github_client.GitHubClient
+        """
         self.logger: Logger = logger
         self.repo_owner: str = repo_owner
         self.repo_name: str = repo_name
