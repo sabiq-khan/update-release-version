@@ -9,7 +9,7 @@ WORKSPACE_ROOT: str = os.path.abspath(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 sys.path.append(WORKSPACE_ROOT)
 from src.release_version_updater.release_version_updater import ReleaseVersionUpdater
-from src.release_version_updater.types import CommitType
+from release_version_updater._types import CommitType
 
 LOGGER: Logger = Logger("test_release_version_updater")
 LOGGER.setLevel(INFO)

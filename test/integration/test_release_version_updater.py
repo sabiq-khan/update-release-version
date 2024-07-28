@@ -6,7 +6,7 @@ WORKSPACE_ROOT: str = os.path.abspath(
 sys.path.append(WORKSPACE_ROOT)
 from src.clients.github.github_client import GitHubClient
 from src.release_version_updater.release_version_updater import ReleaseVersionUpdater
-from src.release_version_updater.types import CommitType
+from release_version_updater._types import CommitType
 from src.release_version_updater.constants import LOGGER, REPO_OWNER, REPO_NAME, REPO_VARIABLE, GITHUB_TOKEN
 
 EXPECTED_INITIAL_VALUE: str = "v1.0.0"

@@ -9,7 +9,7 @@ from logging import Logger
 WORKSPACE_ROOT: str = os.path.abspath(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 sys.path.append(WORKSPACE_ROOT)
-from src.release_version_updater.types import CommitType, MESSAGE_PREFIX_TO_COMMIT_TYPE
+from src.release_version_updater._types import CommitType, MESSAGE_PREFIX_TO_COMMIT_TYPE
 from src.clients.github.github_client import GitHubClient
 
 
