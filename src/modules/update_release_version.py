@@ -1,44 +1,14 @@
 #!/usr/bin/env python3
 import sys
 import json
-import os
-from typing import Dict
+from constants import WORKSPACE_ROOT
+sys.path.append(WORKSPACE_ROOT)
 import requests
 from requests import Response, HTTPError, RequestException
 import subprocess
 from subprocess import CompletedProcess
-from enum import Enum
-from logging import Logger, StreamHandler, Formatter, INFO
-
-LOGGER: Logger = Logger("update_release_version")
-LOGGER.setLevel(INFO)
-HANDLER = StreamHandler(sys.stdout)
-HANDLER.setLevel(INFO)
-FORMATTER = Formatter(
-    "[%(asctime)s][%(name)s][%(filename)s:%(lineno)d][%(funcName)s][%(levelname)s]: %(message)s")
-HANDLER.setFormatter(FORMATTER)
-LOGGER.addHandler(HANDLER)
-
-REPO_NAME: str = os.environ["REPO_NAME"]
-REPO_OWNER: str = os.environ["REPO_OWNER"]
-GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
-
-class CommitMessagePrefix(str, Enum):
-    BREAKING = "breaking"
-    FEAT = "feat"
-    FIX = "fix"
-
-class CommitType(str, Enum):
-    BREAKING = "breaking"
-    FEATURE = "feature"
-    FIX = "fix"
-    OTHER = "other"
-
-MESSAGE_PREFIX_TO_COMMIT_TYPE: Dict[CommitMessagePrefix, CommitType] = {
-    CommitMessagePrefix.BREAKING: CommitType.BREAKING,
-    CommitMessagePrefix.FEAT: CommitType.FEATURE,
-    CommitMessagePrefix.FIX: CommitType.FIX
-}
+from src.modules.constants import LOGGER, REPO_OWNER, REPO_NAME, GITHUB_TOKEN
+from src.modules.types import CommitType, MESSAGE_PREFIX_TO_COMMIT_TYPE
 
 
 def get_latest_commit_msg() -> str:

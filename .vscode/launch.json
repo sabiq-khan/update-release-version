@@ -23,7 +23,7 @@
             "name": "Integration Test: Update Release Version",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/update_release_version.py",
+            "program": "${workspaceFolder}/src/modules/update_release_version.py",
             "console": "integratedTerminal",
             "envFile": "${workspaceFolder}/.env.local"
         }
