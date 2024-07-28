@@ -24,15 +24,15 @@ class TestGitHubClient(unittest.TestCase):
 
     def tearDown(self) -> None:
         # Resets variable to original value
-        self.github_client.update_repository_actions_variable(
+        self.github_client.update_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
             variable=VARIABLE,
             new_value=EXPECTED_INITIAL_VALUE
         )
 
-    def test_get_repository_actions_variable(self):
-        response: Response = self.github_client.get_repository_actions_variable(
+    def test_get_repository_variable(self):
+        response: Response = self.github_client.get_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
             variable=VARIABLE
@@ -46,8 +46,8 @@ class TestGitHubClient(unittest.TestCase):
         assert body["name"] == VARIABLE
         assert body["value"] == EXPECTED_INITIAL_VALUE
 
-    def test_update_repository_actions_variable(self):
-        update_variable_response: Response = self.github_client.update_repository_actions_variable(
+    def test_update_repository_variable(self):
+        update_variable_response: Response = self.github_client.update_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
             variable=VARIABLE,
@@ -56,7 +56,7 @@ class TestGitHubClient(unittest.TestCase):
 
         assert 200 <= update_variable_response.status_code < 300
 
-        get_variable_response: Response = self.github_client.get_repository_actions_variable(
+        get_variable_response: Response = self.github_client.get_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
             variable=VARIABLE

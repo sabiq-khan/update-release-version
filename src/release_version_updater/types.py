@@ -3,6 +3,11 @@ from typing import Dict
 
 
 class CommitMessagePrefix(str, Enum):
+    """
+    Represents prefixes to commit messages, e.g. "feat: Added API endpoint".
+
+    See https://www.conventionalcommits.org/en/v1.0.0/
+    """
     BREAKING = "breaking"
     FEAT = "feat"
     FEATURE = "feature"
@@ -13,6 +18,15 @@ class CommitMessagePrefix(str, Enum):
 
 
 class CommitType(str, Enum):
+    """
+    Commits that break backwards compatibility are a major change.
+    
+    Commits that add non-breaking features are a minor change.
+    
+    Commits for bug fixes, refactoring, or performance improvements are a patch.
+    
+    All other commits do not result in externally noticeable changes.
+    """
     MAJOR = "major"
     MINOR = "minor"
     PATCH = "patch"

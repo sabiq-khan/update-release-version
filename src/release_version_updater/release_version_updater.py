@@ -14,7 +14,33 @@ from src.clients.github.github_client import GitHubClient
 
 
 class ReleaseVersionUpdater:
+    """
+    Increments the semantic release version of a specified GitHub repository.
+
+    Requires that the release version is being stored in a repository variable.
+    Also requires that the release version has the format f"v{major_version}.{minor_version}.{patch_version}".
+
+    Tries to determine which digit to increment based on the prefix of the latest commit, see https://www.conventionalcommits.org/en/v1.0.0/
+
+    Commits that break backwards compatibility result in a major version increment.
+    Commits that add non-breaking features result in a minor version increment.
+    Commits for bug fixes, refactoring, or performance improvements result in patch version increments.
+    All other commits do not result in any release version increment.
+    """
     def __init__(self, logger: Logger, repo_owner: str, repo_name: str, repo_variable: str, github_client: GitHubClient):
+        """
+        Arguments:
+
+        logger (Logger) - An instance of logging.Logger
+        
+        repo_variable (str) - GitHub repository variable storing current release version
+        
+        repo_name (str) - GitHub repo where release version must be incremented
+        
+        repo_owner (str) - GitHub username of the account that owns the repo
+        
+        github_client (GitHubClient) - An instance of src.clients.github.github_client.GitHubClient
+        """
         self.logger: Logger = logger
         self.repo_owner: str = repo_owner
         self.repo_name: str = repo_name
@@ -44,20 +70,20 @@ class ReleaseVersionUpdater:
 
         return commit_type
 
-    def _get_current_version(self) -> str:
-        response: Response = self.github_client.get_repository_actions_variable(
+    def _get_current_release_version(self) -> str:
+        response: Response = self.github_client.get_repository_variable(
             repo_owner=self.repo_owner,
             repo_name=self.repo_name,
             variable=self.repo_variable
         )
 
-        version: str = json.loads(response.content)["value"]
+        release_version: str = json.loads(response.content)["value"]
 
-        return version
+        return release_version
 
-    def _increment_version(self, curr_version: str, latest_commit_type: CommitType) -> str:
+    def _increment_release_version(self, curr_release_version: str, latest_commit_type: CommitType) -> str:
         major_version, minor_version, patch_version = map(
-            int, curr_version.lstrip("v").split("."))
+            int, curr_release_version.lstrip("v").split("."))
 
         if latest_commit_type == CommitType.MAJOR:
             major_version += 1
@@ -66,9 +92,9 @@ class ReleaseVersionUpdater:
         elif latest_commit_type == CommitType.PATCH:
             patch_version += 1
 
-        new_version: str = f"v{major_version}.{minor_version}.{patch_version}"
+        new_release_version: str = f"v{major_version}.{minor_version}.{patch_version}"
 
-        return new_version
+        return new_release_version
 
     def update_release_version(self):
         try:
@@ -80,15 +106,15 @@ class ReleaseVersionUpdater:
 
             self.logger.info(
                 f"Calling GitHub API to get current release version for {self.repo_owner}/{self.repo_name}...")
-            curr_version: str = self._get_current_version()
-            self.logger.info(f"Latest release version: {curr_version}")
+            curr_release_version: str = self._get_current_release_version()
+            self.logger.info(f"Latest release version: {curr_release_version}")
 
-            incremented_version: str = self._increment_version(curr_version, latest_commit_type)
+            incremented_version: str = self._increment_release_version(curr_release_version, latest_commit_type)
             # Ensures version was successfully incremented
-            if incremented_version != curr_version:
+            if incremented_version != curr_release_version:
                 self.logger.info(
                     f"Calling GitHub API to update release version for {self.repo_owner}/{self.repo_name} to {incremented_version}...")
-                response: Response = self.github_client.update_repository_actions_variable(
+                response: Response = self.github_client.update_repository_variable(
                     repo_owner=self.repo_owner,
                     repo_name=self.repo_name,
                     variable=self.repo_variable,
@@ -96,9 +122,9 @@ class ReleaseVersionUpdater:
                 )
                 self.logger.info(
                     f"Received the following response from GitHub: {response.status_code}")
-                self.logger.info(f"Successfully incremented release version from {curr_version} to {incremented_version}!")
+                self.logger.info(f"Successfully incremented release version from {curr_release_version} to {incremented_version}!")
             else:
-                self.logger.info(f"No increment applied to version number {curr_version}. Exiting.")
+                self.logger.info(f"No increment applied to version number {curr_release_version}. Exiting.")
         except Exception as e:
             self.logger.error(e)
             raise e

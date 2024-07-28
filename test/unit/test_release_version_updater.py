@@ -73,7 +73,7 @@ class TestReleaseVersionUpdater(unittest.TestCase):
 
         assert commit_type == CommitType.OTHER
 
-    def test_get_current_version(self):
+    def test_get_current_release_version(self):
         mock_response: Response = Response()
         mock_response.status_code = 200
         mock_response._content = json.dumps(
@@ -84,43 +84,43 @@ class TestReleaseVersionUpdater(unittest.TestCase):
                 "updated_at": "2022-01-10T14:59:22Z"
             }
         )
-        self.release_version_updater.github_client.get_repository_actions_variable.return_value = mock_response
+        self.release_version_updater.github_client.get_repository_variable.return_value = mock_response
         
-        version: str = self.release_version_updater._get_current_version()
-        self.release_version_updater.github_client.get_repository_actions_variable.assert_called_once_with(
+        version: str = self.release_version_updater._get_current_release_version()
+        self.release_version_updater.github_client.get_repository_variable.assert_called_once_with(
             repo_owner=MOCK_REPO_OWNER,
             repo_name=MOCK_REPO_NAME,
             variable=MOCK_REPO_VARIABLE
         )
         assert version == "v1.0.0"
 
-    def test_increment_version_major(self):
-        curr_version: str = "v1.0.0"
+    def test_increment_release_version_major(self):
+        curr_release_version: str = "v1.0.0"
         latest_commit_type: str = CommitType.MAJOR
-        new_version: str = self.release_version_updater._increment_version(curr_version, latest_commit_type)
+        new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_version == "v2.0.0"
+        assert new_release_version == "v2.0.0"
 
-    def test_increment_version_minor(self):
-        curr_version: str = "v1.0.0"
+    def test_increment_release_version_minor(self):
+        curr_release_version: str = "v1.0.0"
         latest_commit_type: str = CommitType.MINOR
-        new_version: str = self.release_version_updater._increment_version(curr_version, latest_commit_type)
+        new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_version == "v1.1.0"
+        assert new_release_version == "v1.1.0"
 
-    def test_increment_version_patch(self):
-        curr_version: str = "v1.0.0"
+    def test_increment_release_version_patch(self):
+        curr_release_version: str = "v1.0.0"
         latest_commit_type: str = CommitType.PATCH
-        new_version: str = self.release_version_updater._increment_version(curr_version, latest_commit_type)
+        new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_version == "v1.0.1"
+        assert new_release_version == "v1.0.1"
 
-    def test_increment_version_other(self):
-        curr_version: str = "v1.0.0"
+    def test_increment_release_version_other(self):
+        curr_release_version: str = "v1.0.0"
         latest_commit_type: str = CommitType.OTHER
-        new_version: str = self.release_version_updater._increment_version(curr_version, latest_commit_type)
+        new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_version == "v1.0.0"
+        assert new_release_version == "v1.0.0"
 
     def test_update_release_version(self):
         latest_commit_msg: str = self.release_version_updater._get_latest_commit_msg()
@@ -136,33 +136,33 @@ class TestReleaseVersionUpdater(unittest.TestCase):
                 "updated_at": "2022-01-10T14:59:22Z"
             }
         )
-        self.release_version_updater.github_client.get_repository_actions_variable.return_value = mock_response
+        self.release_version_updater.github_client.get_repository_variable.return_value = mock_response
 
         self.release_version_updater.update_release_version()
 
         if latest_commit_type == CommitType.MAJOR:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
+            self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v2.0.0"
             )
         elif latest_commit_type == CommitType.MINOR:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
+            self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v1.1.0"
             )
         elif latest_commit_type == CommitType.PATCH:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_called_once_with(
+            self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                 repo_owner=MOCK_REPO_OWNER,
                 repo_name=MOCK_REPO_NAME,
                 variable=MOCK_REPO_VARIABLE,
                 new_value="v1.0.1"
             )
         elif latest_commit_type == CommitType.OTHER:
-            self.release_version_updater.github_client.update_repository_actions_variable.assert_not_called()
+            self.release_version_updater.github_client.update_repository_variable.assert_not_called()
 
 
 if __name__ == "__main__":

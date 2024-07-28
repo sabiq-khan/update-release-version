@@ -24,7 +24,7 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         )
 
     def tearDown(self):
-        self.github_client.update_repository_actions_variable(
+        self.github_client.update_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
             variable=REPO_VARIABLE,
@@ -32,24 +32,24 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         )
 
     def test_update_release_version(self):
-        curr_version_number: str = self.release_version_updater._get_current_version()
+        curr_release_version: str = self.release_version_updater._get_current_release_version()
 
-        assert curr_version_number == EXPECTED_INITIAL_VALUE
+        assert curr_release_version == EXPECTED_INITIAL_VALUE
 
         self.release_version_updater.update_release_version()
 
         latest_commit_msg: str = self.release_version_updater._get_latest_commit_msg()
         latest_commit_type: CommitType = self.release_version_updater._get_commit_type(latest_commit_msg)
-        updated_version_number: str = self.release_version_updater._get_current_version()
+        updated_release_version: str = self.release_version_updater._get_current_release_version()
 
         if latest_commit_type == CommitType.MAJOR:
-            assert updated_version_number == "v2.0.0"
+            assert updated_release_version == "v2.0.0"
         elif latest_commit_type == CommitType.MINOR:
-            assert updated_version_number == "v1.1.0"
+            assert updated_release_version == "v1.1.0"
         elif latest_commit_type == CommitType.PATCH:
-            assert updated_version_number == "v1.0.1"
+            assert updated_release_version == "v1.0.1"
         elif latest_commit_type == CommitType.OTHER:
-            assert updated_version_number == EXPECTED_INITIAL_VALUE
+            assert updated_release_version == EXPECTED_INITIAL_VALUE
 
 
 if __name__ == "__main__":
