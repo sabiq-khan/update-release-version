@@ -27,6 +27,20 @@ class GitHubClient:
         return response
 
     def get_repository_actions_variable(self, repo_owner: str, repo_name: str, variable: str) -> Response:
+        """
+        Retrieves the value of a specified GitHub Actions repository variable for a specified repository. See https://docs.github.com/en/rest/actions/variables?apiVersion=2022-11-28#get-a-repository-variable
+
+        Arguments:
+        variable (str) - GitHub repository variable whose value will be retrieved
+        
+        repo_name (str) - GitHub repo to which the variable belongs
+        
+        repo_owner (str) - GitHub username of the account that owns the repo
+
+        Returns:
+        
+        response (Response) - A requests.Response object containing JSON body in Response.content byte string
+        """
         def _get_repository_actions_variable() -> Response:
             response: Response = requests.get(
                 url=f"{self.base_uri}/repos/{repo_owner}/{repo_name}/actions/variables/{variable}",
@@ -41,6 +55,23 @@ class GitHubClient:
         return response
 
     def update_repository_actions_variable(self, repo_owner: str, repo_name: str, variable: str, new_value: str) -> Response:
+        """
+        Changes the value of a specified GitHub Actions repository variable for a specified repository. See https://docs.github.com/en/rest/actions/variables?apiVersion=2022-11-28#update-a-repository-variable
+
+        Arguments:
+
+        variable (str) - GitHub repository variable whose value will be changed
+
+        new_value (str) - The new value of the repository variable
+        
+        repo_name (str) - GitHub repo to which the variable belongs
+        
+        repo_owner (str) - GitHub username of the account that owns the repo
+
+        Returns:
+        
+        response (Response) - A requests.Response object. This call does not return data in response body.
+        """
         def _update_repository_actions_variable() -> Response:
             response: Response = requests.patch(
                 url=f"{self.base_uri}/repos/{repo_owner}/{repo_name}/actions/variables/{variable}",
