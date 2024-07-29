@@ -5,7 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Integration Test: GitHub Client",
+            "name": "Unit Test: ReleaseVersionUpdater",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/test/unit/test_release_version_updater.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Integration Test: ReleaseVersionUpdater",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/test/integration/test_release_version_updater.py",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.env.local"
+        },
+        {
+            "name": "Integration Test: GitHubClient",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/test/integration/test_github_client.py",
@@ -13,17 +28,10 @@
             "envFile": "${workspaceFolder}/.env.local.test"
         },
         {
-            "name": "Python Debugger: Current File",
+            "name": "E2E Test: Update Release Version",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "Integration Test: Update Release Version",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/test/integration/test_release_version_updater.py",
+            "program": "${workspaceFolder}/src/release_version_updater/main.py",
             "console": "integratedTerminal",
             "envFile": "${workspaceFolder}/.env.local"
         }

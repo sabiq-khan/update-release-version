@@ -1,0 +1,14 @@
+.dockerignore
+Dockerfile
+**.git/
+.gitignore
+**test/
+pyvenv.cfg
+.env*
+**bin/
+**lib/
+**lib64/
+**include/
+**__pycache/
+**.vscode/
+test-github-output.txt

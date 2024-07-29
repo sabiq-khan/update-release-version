@@ -5,7 +5,7 @@ WORKSPACE_ROOT: str = os.path.abspath(
 sys.path.append(WORKSPACE_ROOT)
 from src.clients.github.github_client import GitHubClient
 from src.release_version_updater.release_version_updater import ReleaseVersionUpdater
-from src.release_version_updater.constants import LOGGER, REPO_OWNER, REPO_NAME, REPO_VARIABLE, GITHUB_TOKEN
+from src.release_version_updater.constants import LOGGER, REPO_OWNER, REPO_NAME, REPO_VARIABLE, GITHUB_TOKEN, GITHUB_OUTPUT
 
 
 def main():
@@ -16,7 +16,8 @@ def main():
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
             repo_variable=REPO_VARIABLE,
-            github_client=github_client
+            github_client=github_client,
+            github_output=GITHUB_OUTPUT
         )
 
         release_version_updater.update_release_version()

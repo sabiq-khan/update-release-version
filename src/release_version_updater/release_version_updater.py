@@ -9,7 +9,7 @@ from logging import Logger
 WORKSPACE_ROOT: str = os.path.abspath(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 sys.path.append(WORKSPACE_ROOT)
-from src.release_version_updater.types import CommitType, MESSAGE_PREFIX_TO_COMMIT_TYPE
+from src.release_version_updater._types import CommitType, MESSAGE_PREFIX_TO_COMMIT_TYPE
 from src.clients.github.github_client import GitHubClient
 
 
@@ -26,8 +26,11 @@ class ReleaseVersionUpdater:
     Commits that add non-breaking features result in a minor version increment.
     Commits for bug fixes, refactoring, or performance improvements result in patch version increments.
     All other commits do not result in any release version increment.
+
+    In addition to updating the release version via API, the incremented version is also passed to other stages of the current GitHub Actions run via $GITHUB_OUTPUT.
+    See https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
     """
-    def __init__(self, logger: Logger, repo_owner: str, repo_name: str, repo_variable: str, github_client: GitHubClient):
+    def __init__(self, logger: Logger, repo_owner: str, repo_name: str, repo_variable: str, github_client: GitHubClient, github_output: str):
         """
         Arguments:
 
@@ -40,12 +43,15 @@ class ReleaseVersionUpdater:
         repo_owner (str) - GitHub username of the account that owns the repo
         
         github_client (GitHubClient) - An instance of src.clients.github.github_client.GitHubClient
+
+        github_output (str) - Path to $GITHUB_OUTPUT in GitHub Actions environment, see https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
         """
         self.logger: Logger = logger
         self.repo_owner: str = repo_owner
         self.repo_name: str = repo_name
         self.repo_variable: str = repo_variable
         self.github_client: GitHubClient = github_client
+        self.github_output: str = github_output
 
     def _get_latest_commit_msg(self) -> str:
         git_log: CompletedProcess = subprocess.run(
@@ -95,6 +101,10 @@ class ReleaseVersionUpdater:
         new_release_version: str = f"v{major_version}.{minor_version}.{patch_version}"
 
         return new_release_version
+    
+    def _write_to_github_output(self, key: str, value: str):
+        with open(file=self.github_output, mode="a") as github_output:
+            github_output.write(f"{key}={value}")
 
     def update_release_version(self):
         try:
@@ -123,8 +133,17 @@ class ReleaseVersionUpdater:
                 self.logger.info(
                     f"Received the following response from GitHub: {response.status_code}")
                 self.logger.info(f"Successfully incremented release version from {curr_release_version} to {incremented_version}!")
+
+                curr_release_version = incremented_version
             else:
-                self.logger.info(f"No increment applied to version number {curr_release_version}. Exiting.")
+                self.logger.info(f"No increment applied to version number {curr_release_version}.")
+
+            self.logger.info(f"Writing '{curr_release_version}' to $GITHUB_OUTPUT '{self.github_output}'...")
+            self._write_to_github_output("release_version", curr_release_version)
+            self.logger.info(f"Release version successfully written to $GITHUB_OUTPUT '{self.github_output}'!")
+
+            self.logger.info("Exiting.")
+            
         except Exception as e:
             self.logger.error(e)
             raise e

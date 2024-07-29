@@ -5,3 +5,4 @@ lib64*
 include/
 pyvenv.cfg
 __pycache__/
+test-github-output.txt
