@@ -52,16 +52,16 @@ class TestReleaseVersionUpdater(unittest.TestCase):
             lines: List[str] = github_output.readlines()
             if latest_commit_type == CommitType.MAJOR:
                 assert updated_release_version == "v2.0.0"
-                assert lines[-1] == "v2.0.0"
+                assert lines[-1] == "release_version=v2.0.0"
             elif latest_commit_type == CommitType.MINOR:
                 assert updated_release_version == "v1.1.0"
-                assert lines[-1] == "v1.1.0"
+                assert lines[-1] == "release_version=v1.1.0"
             elif latest_commit_type == CommitType.PATCH:
                 assert updated_release_version == "v1.0.1"
-                assert lines[-1] == "v1.0.1"
+                assert lines[-1] == "release_version=v1.0.1"
             elif latest_commit_type == CommitType.OTHER:
                 assert updated_release_version == EXPECTED_INITIAL_VALUE
-                assert lines[-1] == "v1.0.0"
+                assert lines[-1] == "release_version=v1.0.0"
 
 
 if __name__ == "__main__":
