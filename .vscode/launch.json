@@ -28,12 +28,20 @@
             "envFile": "${workspaceFolder}/.env.local.test"
         },
         {
-            "name": "E2E Test: Update Release Version",
+            "name": "E2E Test: main.py",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/release_version_updater/main.py",
             "console": "integratedTerminal",
             "envFile": "${workspaceFolder}/.env.local"
+        },
+        {
+            "name": "E2E Test: Docker",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/test/integration/test_docker.py",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.env.local.docker"
         }
     ]
 }
