@@ -8,6 +8,7 @@ from typing import List
 WORKSPACE_ROOT: str = os.path.abspath(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 sys.path.append(WORKSPACE_ROOT)
+from src.clients.github.github_client import GitHubClient
 
 IMAGE_NAME: str ="update-release-version"
 DOCKERFILE: str = "Dockerfile"
@@ -15,14 +16,32 @@ WORKDIR: str = "/app"
 ENTRYPOINT: List[str] = ["/usr/bin/env", "python3", "src/release_version_updater/main.py"]
 
 GITHUB_OUTPUT: str = os.environ["GITHUB_OUTPUT"]
-SUB_DIR: str = "src/release_version_updater"
-HOST_OUTPUT_PATH: str = f"{os.path.abspath(WORKSPACE_ROOT)}/{SUB_DIR}/{GITHUB_OUTPUT}"
-CONTAINER_OUTPUT_PATH: str = f"/app/{SUB_DIR}/{GITHUB_OUTPUT}"
+HOST_OUTPUT_PATH: str = f"{os.path.abspath(WORKSPACE_ROOT)}/{GITHUB_OUTPUT}"
+CONTAINER_OUTPUT_PATH: str = f"/app/{GITHUB_OUTPUT}"
+
+EXPECTED_INITIAL_VALUE: str = "v1.0.0"
+GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
+REPO_OWNER: str = os.environ["REPO_OWNER"]
+REPO_NAME: str = os.environ["REPO_NAME"]
+REPO_VARIABLE: str = os.environ["REPO_VARIABLE"]
 
 
 class TestDocker(unittest.TestCase):
     def setUp(self):
         self.docker_client: DockerClient = DockerClient()
+        with open(file=HOST_OUTPUT_PATH, mode="w"):
+            pass
+
+    def tearDown(self):
+        github_client: GitHubClient = GitHubClient(github_token=GITHUB_TOKEN)
+        github_client.update_repository_variable(
+            repo_owner=REPO_OWNER,
+            repo_name=REPO_NAME,
+            variable=REPO_VARIABLE,
+            new_value=EXPECTED_INITIAL_VALUE
+        )
+        with open(file=HOST_OUTPUT_PATH, mode="w"):
+            pass
 
     def test_image_build(self):
         image: Image = self.docker_client.images.build(path=WORKSPACE_ROOT, dockerfile=DOCKERFILE, tag=IMAGE_NAME)[0]
