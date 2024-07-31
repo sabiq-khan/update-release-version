@@ -28,6 +28,11 @@
             "envFile": "${workspaceFolder}/.env.local.test"
         },
         {
+            /*
+            * Equivalent to the following commands:
+            * $ source .env.local
+            * $ python3 src/release_version_updater/main.py
+            */
             "name": "E2E Test: main.py",
             "type": "debugpy",
             "request": "launch",
@@ -36,6 +41,11 @@
             "envFile": "${workspaceFolder}/.env.local"
         },
         {
+            /*
+            * Equivalent to the following Docker commands:
+            * $ docker build . -t update-release-version
+            * $ docker run --env-file .env.local.docker -v $(pwd)/test-github-output.txt:/app/src/release_version_updater/test-github-output.txt update-release-version
+            */
             "name": "E2E Test: Docker",
             "type": "debugpy",
             "request": "launch",
