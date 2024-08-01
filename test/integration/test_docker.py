@@ -16,8 +16,11 @@ WORKDIR: str = "/app"
 ENTRYPOINT: List[str] = ["/usr/bin/env", "python3", "src/release_version_updater/main.py"]
 
 GITHUB_OUTPUT: str = os.environ["GITHUB_OUTPUT"]
-HOST_OUTPUT_PATH: str = f"{os.path.abspath(WORKSPACE_ROOT)}/{GITHUB_OUTPUT}"
-CONTAINER_OUTPUT_PATH: str = f"/app/{GITHUB_OUTPUT}"
+# HOST_APP_ROOT: str = f"{os.path.abspath(WORKSPACE_ROOT)}/{GITHUB_OUTPUT}"
+# CONTAINER_APP_ROOT: str = f"/app/{GITHUB_OUTPUT}"
+
+HOST_APP_ROOT: str = f"{os.path.abspath(WORKSPACE_ROOT)}"
+CONTAINER_APP_ROOT: str = f"/app"
 
 EXPECTED_INITIAL_VALUE: str = "v1.0.0"
 GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
@@ -29,7 +32,7 @@ REPO_VARIABLE: str = os.environ["REPO_VARIABLE"]
 class TestDocker(unittest.TestCase):
     def setUp(self):
         self.docker_client: DockerClient = DockerClient()
-        with open(file=HOST_OUTPUT_PATH, mode="w"):
+        with open(file=f"{HOST_APP_ROOT}/{GITHUB_OUTPUT}", mode="w"):
             pass
 
     def tearDown(self):
@@ -40,7 +43,7 @@ class TestDocker(unittest.TestCase):
             variable=REPO_VARIABLE,
             new_value=EXPECTED_INITIAL_VALUE
         )
-        with open(file=HOST_OUTPUT_PATH, mode="w"):
+        with open(file=f"{HOST_APP_ROOT}/{GITHUB_OUTPUT}", mode="w"):
             pass
 
     def test_image_build(self):
@@ -62,7 +65,8 @@ class TestDocker(unittest.TestCase):
 
     def test_container_run(self):
         environ: List[str] = self._get_environ()
-        container_logs: str = bytes(self.docker_client.containers.run(image=IMAGE_NAME, environment=environ, mounts=[Mount(source=HOST_OUTPUT_PATH, target=CONTAINER_OUTPUT_PATH, type="bind")], stdout=True, stderr=True)).decode("utf-8")
+        bind_mount: Mount = Mount(source=HOST_APP_ROOT, target=CONTAINER_APP_ROOT, type="bind")
+        container_logs: str = bytes(self.docker_client.containers.run(image=IMAGE_NAME, environment=environ, mounts=[bind_mount], stdout=True, stderr=True)).decode("utf-8")
         print(container_logs)
 
 
