@@ -28,12 +28,30 @@
             "envFile": "${workspaceFolder}/.env.local.test"
         },
         {
-            "name": "E2E Test: Update Release Version",
+            /*
+            * Equivalent to the following commands:
+            * $ source .env.local
+            * $ python3 src/release_version_updater/main.py
+            */
+            "name": "E2E Test: main.py",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/release_version_updater/main.py",
             "console": "integratedTerminal",
             "envFile": "${workspaceFolder}/.env.local"
+        },
+        {
+            /*
+            * Equivalent to the following Docker commands:
+            * $ docker build . -t update-release-version
+            * $ docker run --env-file .env.local.docker -v $(WORKSPACE_ROOT)/:/app/ update-release-version
+            */
+            "name": "E2E Test: Docker",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/test/integration/test_docker.py",
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.env.local.docker"
         }
     ]
 }

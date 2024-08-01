@@ -1,0 +1,14 @@
+# action.yml
+name: 'Update Release Version'
+description: 'Increments semantic version for a GitHub release.'
+outputs:
+  release-version: # id of output
+    description: 'The current release version of the GitHub repository.'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    - GITHUB_TOKEN
+    - REPO_NAME
+    - REPO_OWNER
+    - REPO_VARIABLE

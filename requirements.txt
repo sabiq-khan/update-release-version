@@ -1,1 +1,5 @@
 requests
+
+# For development/testing uncomment the following:
+# docker
+# pytest

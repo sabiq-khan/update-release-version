@@ -9,6 +9,6 @@ pyvenv.cfg
 **lib/
 **lib64/
 **include/
-**__pycache/
+**__pycache__/
 **.vscode/
 test-github-output.txt

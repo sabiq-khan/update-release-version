@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from subprocess import CompletedProcess
 import subprocess
+from typing import List
 from requests import Response
 import json
 import os
@@ -54,16 +55,24 @@ class ReleaseVersionUpdater:
         self.github_output: str = github_output
 
     def _get_latest_commit_msg(self) -> str:
+        git_cmd: List[str] = [
+            "git",
+            "-c",
+            f"safe.directory={os.getcwd()}",
+            "--no-pager",
+            "log",
+            "-1",
+            "--pretty=%B"
+        ]
+        self.logger.info(f"Running the following git command: {' '.join(git_cmd)}")
         git_log: CompletedProcess = subprocess.run(
-            [
-                "git",
-                "log",
-                "-1",
-                "--pretty=%B"
-            ],
+            git_cmd,
             shell=False,
             capture_output=True
         )
+
+        if git_log.returncode != 0:
+            raise ChildProcessError(bytes(git_log.stderr).decode("utf-8"))
 
         commit_msg: str = bytes(git_log.stdout).decode("utf-8")
 
