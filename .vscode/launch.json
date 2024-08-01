@@ -44,7 +44,7 @@
             /*
             * Equivalent to the following Docker commands:
             * $ docker build . -t update-release-version
-            * $ docker run --env-file .env.local.docker -v $(pwd)/test-github-output.txt:/app/src/release_version_updater/test-github-output.txt update-release-version
+            * $ docker run --env-file .env.local.docker -v $(WORKSPACE_ROOT)/:/app/ update-release-version
             */
             "name": "E2E Test: Docker",
             "type": "debugpy",

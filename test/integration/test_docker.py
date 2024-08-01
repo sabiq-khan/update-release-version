@@ -12,15 +12,10 @@ from src.clients.github.github_client import GitHubClient
 
 IMAGE_NAME: str ="update-release-version"
 DOCKERFILE: str = "Dockerfile"
-WORKDIR: str = "/app"
+CONTAINER_APP_ROOT: str = f"/app"
 ENTRYPOINT: List[str] = ["/usr/bin/env", "python3", "src/release_version_updater/main.py"]
 
 GITHUB_OUTPUT: str = os.environ["GITHUB_OUTPUT"]
-# HOST_APP_ROOT: str = f"{os.path.abspath(WORKSPACE_ROOT)}/{GITHUB_OUTPUT}"
-# CONTAINER_APP_ROOT: str = f"/app/{GITHUB_OUTPUT}"
-
-HOST_APP_ROOT: str = f"{os.path.abspath(WORKSPACE_ROOT)}"
-CONTAINER_APP_ROOT: str = f"/app"
 
 EXPECTED_INITIAL_VALUE: str = "v1.0.0"
 GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
@@ -32,7 +27,7 @@ REPO_VARIABLE: str = os.environ["REPO_VARIABLE"]
 class TestDocker(unittest.TestCase):
     def setUp(self):
         self.docker_client: DockerClient = DockerClient()
-        with open(file=f"{HOST_APP_ROOT}/{GITHUB_OUTPUT}", mode="w"):
+        with open(file=f"{WORKSPACE_ROOT}/{GITHUB_OUTPUT}", mode="w"):
             pass
 
     def tearDown(self):
@@ -43,13 +38,13 @@ class TestDocker(unittest.TestCase):
             variable=REPO_VARIABLE,
             new_value=EXPECTED_INITIAL_VALUE
         )
-        with open(file=f"{HOST_APP_ROOT}/{GITHUB_OUTPUT}", mode="w"):
+        with open(file=f"{WORKSPACE_ROOT}/{GITHUB_OUTPUT}", mode="w"):
             pass
 
     def test_image_build(self):
         image: Image = self.docker_client.images.build(path=WORKSPACE_ROOT, dockerfile=DOCKERFILE, tag=IMAGE_NAME)[0]
         assert image.tags[0] == f"{IMAGE_NAME}:latest"
-        assert image.attrs["ContainerConfig"]["WorkingDir"] == WORKDIR
+        assert image.attrs["ContainerConfig"]["WorkingDir"] == CONTAINER_APP_ROOT
         assert image.attrs["ContainerConfig"]["Entrypoint"] == ENTRYPOINT
         assert image.attrs["Size"] < 100000000
     
@@ -65,7 +60,7 @@ class TestDocker(unittest.TestCase):
 
     def test_container_run(self):
         environ: List[str] = self._get_environ()
-        bind_mount: Mount = Mount(source=HOST_APP_ROOT, target=CONTAINER_APP_ROOT, type="bind")
+        bind_mount: Mount = Mount(source=WORKSPACE_ROOT, target=CONTAINER_APP_ROOT, type="bind")
         container_logs: str = bytes(self.docker_client.containers.run(image=IMAGE_NAME, environment=environ, mounts=[bind_mount], stdout=True, stderr=True)).decode("utf-8")
         print(container_logs)
 
