@@ -11,7 +11,7 @@ See https://semver.org/
 
 ## How it works
 This action tries to determine which digit in the semantic version to increment based on the prefix of the latest commit. These prefixes should adhere to the [Conventional Commit specification](https://www.conventionalcommits.org/en/v1.0.0/).
-- Commits that break backwards compatibility (typically prefaced with `BREAKING:`) result in a major version increment.
+- Commits that break backwards compatibility (typically prefaced with `BREAKING CHANGE:`) result in a major version increment.
 - Commits that add non-breaking features (typically prefaced with `feat:`) result in a minor version increment.
 - Commits for bug fixes, refactoring, or performance improvements (typically prefaced with `fix:`, `refactor:`, `perf:`, or `test:`) result in patch version increments.
 - All other commits do not result in any release version increment.

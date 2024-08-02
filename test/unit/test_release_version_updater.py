@@ -48,7 +48,7 @@ class TestReleaseVersionUpdater(unittest.TestCase):
             pass
 
     def test_get_commit_type_breaking(self):
-        commit_msg: str = "breaking: Deprecated legacy API endpoint"
+        commit_msg: str = "BREAKING CHANGE: Deprecated legacy API endpoint"
         commit_type: CommitType = self.release_version_updater._get_commit_type(commit_msg)
 
         assert commit_type == CommitType.MAJOR

@@ -8,7 +8,7 @@ class CommitMessagePrefix(str, Enum):
 
     See https://www.conventionalcommits.org/en/v1.0.0/
     """
-    BREAKING = "breaking"
+    BREAKING = "BREAKING CHANGE"
     FEAT = "feat"
     FEATURE = "feature"
     FIX = "fix"
