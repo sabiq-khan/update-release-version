@@ -12,7 +12,7 @@ from src.clients.github.github_client import GitHubClient
 GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
 REPO_OWNER: str = os.environ["REPO_OWNER"]
 REPO_NAME: str = os.environ["REPO_NAME"]
-VARIABLE: str = os.environ["VARIABLE"]
+REPO_VARIABLE: str = os.environ["REPO_VARIABLE"]
 EXPECTED_INITIAL_VALUE: str = os.environ["EXPECTED_INITIAL_VALUE"]
 NEW_VALUE: str = os.environ["NEW_VALUE"]
 
@@ -27,7 +27,7 @@ class TestGitHubClient(unittest.TestCase):
         self.github_client.update_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
-            variable=VARIABLE,
+            variable=REPO_VARIABLE,
             new_value=EXPECTED_INITIAL_VALUE
         )
 
@@ -35,7 +35,7 @@ class TestGitHubClient(unittest.TestCase):
         response: Response = self.github_client.get_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
-            variable=VARIABLE
+            variable=REPO_VARIABLE
         )
 
         body: Dict[str, Any] = json.loads(response.content)
@@ -43,14 +43,14 @@ class TestGitHubClient(unittest.TestCase):
         assert 200 <= response.status_code < 300
         assert "value" in body
         assert "name" in body
-        assert body["name"] == VARIABLE
+        assert body["name"] == REPO_VARIABLE
         assert body["value"] == EXPECTED_INITIAL_VALUE
 
     def test_update_repository_variable(self):
         update_variable_response: Response = self.github_client.update_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
-            variable=VARIABLE,
+            variable=REPO_VARIABLE,
             new_value=NEW_VALUE
         )
 
@@ -59,7 +59,7 @@ class TestGitHubClient(unittest.TestCase):
         get_variable_response: Response = self.github_client.get_repository_variable(
             repo_owner=REPO_OWNER,
             repo_name=REPO_NAME,
-            variable=VARIABLE
+            variable=REPO_VARIABLE
         )
 
         body: Dict[str, Any] = json.loads(get_variable_response.content)

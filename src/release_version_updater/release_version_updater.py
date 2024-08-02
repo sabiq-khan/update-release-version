@@ -19,7 +19,8 @@ class ReleaseVersionUpdater:
     Increments the semantic release version of a specified GitHub repository.
 
     Requires that the release version is being stored in a repository variable.
-    Also requires that the release version has the format f"v{major_version}.{minor_version}.{patch_version}".
+    Also requires that the release version has the format f"{major_version}.{minor_version}.{patch_version}".
+    See https://semver.org/
 
     Tries to determine which digit to increment based on the prefix of the latest commit, see https://www.conventionalcommits.org/en/v1.0.0/
 
@@ -98,7 +99,7 @@ class ReleaseVersionUpdater:
 
     def _increment_release_version(self, curr_release_version: str, latest_commit_type: CommitType) -> str:
         major_version, minor_version, patch_version = map(
-            int, curr_release_version.lstrip("v").split("."))
+            int, curr_release_version.split("."))
 
         if latest_commit_type == CommitType.MAJOR:
             major_version += 1
@@ -107,7 +108,7 @@ class ReleaseVersionUpdater:
         elif latest_commit_type == CommitType.PATCH:
             patch_version += 1
 
-        new_release_version: str = f"v{major_version}.{minor_version}.{patch_version}"
+        new_release_version: str = f"{major_version}.{minor_version}.{patch_version}"
 
         return new_release_version
     

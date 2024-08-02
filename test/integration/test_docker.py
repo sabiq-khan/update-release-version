@@ -17,7 +17,7 @@ ENTRYPOINT: List[str] = ["/usr/bin/env", "python3", "src/release_version_updater
 
 GITHUB_OUTPUT: str = os.environ["GITHUB_OUTPUT"]
 
-EXPECTED_INITIAL_VALUE: str = "v1.0.0"
+EXPECTED_INITIAL_VALUE: str = "1.0.0"
 GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
 REPO_OWNER: str = os.environ["REPO_OWNER"]
 REPO_NAME: str = os.environ["REPO_NAME"]
