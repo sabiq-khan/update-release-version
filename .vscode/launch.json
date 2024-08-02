@@ -5,6 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
+            /*
+            * Equivalent to the following command:
+            * $ python3 test/unit/test_release_version.py
+            */
             "name": "Unit Test: ReleaseVersionUpdater",
             "type": "debugpy",
             "request": "launch",
@@ -12,6 +16,18 @@
             "console": "integratedTerminal"
         },
         {
+            /*
+            * Equivalent to the following commands:
+            * $ source .env.local
+            * $ python3 test/integration/test_release_version.py
+            * 
+            * Ensure that .env.local defines the following:
+            * GITHUB_TOKEN=
+            * GITHUB_OUTPUT=
+            * REPO_OWNER=
+            * REPO_NAME=
+            * REPO_VARIABLE=
+            */
             "name": "Integration Test: ReleaseVersionUpdater",
             "type": "debugpy",
             "request": "launch",
@@ -20,18 +36,39 @@
             "envFile": "${workspaceFolder}/.env.local"
         },
         {
+            /*
+            * Equivalent to the following commands:
+            * $ source .env.local.github
+            * $ python3 test/integration/test_github_client.py
+            * 
+            * Ensure that .env.local defines the following:
+            * GITHUB_TOKEN=
+            * GITHUB_OUTPUT=
+            * REPO_OWNER=
+            * REPO_NAME=
+            * REPO_VARIABLE=
+            * EXPECTED_INITIAL_VALUE=
+            * NEW_VALUE=
+            */
             "name": "Integration Test: GitHubClient",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/test/integration/test_github_client.py",
             "console": "integratedTerminal",
-            "envFile": "${workspaceFolder}/.env.local.test"
+            "envFile": "${workspaceFolder}/.env.local.github"
         },
         {
             /*
             * Equivalent to the following commands:
             * $ source .env.local
             * $ python3 src/release_version_updater/main.py
+            * 
+            * Ensure that .env.local defines the following:
+            * GITHUB_TOKEN=
+            * GITHUB_OUTPUT=
+            * REPO_OWNER=
+            * REPO_NAME=
+            * REPO_VARIABLE=
             */
             "name": "E2E Test: main.py",
             "type": "debugpy",
@@ -45,6 +82,13 @@
             * Equivalent to the following Docker commands:
             * $ docker build . -t update-release-version
             * $ docker run --env-file .env.local.docker -v $(WORKSPACE_ROOT)/:/app/ update-release-version
+            * 
+            * Ensure that .env.local.docker defines the following:
+            * GITHUB_TOKEN=
+            * GITHUB_OUTPUT=
+            * REPO_OWNER=
+            * REPO_NAME=
+            * REPO_VARIABLE=
             */
             "name": "E2E Test: Docker",
             "type": "debugpy",

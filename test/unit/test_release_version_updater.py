@@ -89,7 +89,7 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         mock_response._content = json.dumps(
             {
                 "name": MOCK_REPO_VARIABLE,
-                "value": "v1.0.0",
+                "value": "1.0.0",
                 "created_at": "2021-08-10T14:59:22Z",
                 "updated_at": "2022-01-10T14:59:22Z"
             }
@@ -102,35 +102,35 @@ class TestReleaseVersionUpdater(unittest.TestCase):
             repo_name=MOCK_REPO_NAME,
             variable=MOCK_REPO_VARIABLE
         )
-        assert version == "v1.0.0"
+        assert version == "1.0.0"
 
     def test_increment_release_version_major(self):
-        curr_release_version: str = "v1.0.0"
+        curr_release_version: str = "1.0.0"
         latest_commit_type: str = CommitType.MAJOR
         new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_release_version == "v2.0.0"
+        assert new_release_version == "2.0.0"
 
     def test_increment_release_version_minor(self):
-        curr_release_version: str = "v1.0.0"
+        curr_release_version: str = "1.0.0"
         latest_commit_type: str = CommitType.MINOR
         new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_release_version == "v1.1.0"
+        assert new_release_version == "1.1.0"
 
     def test_increment_release_version_patch(self):
-        curr_release_version: str = "v1.0.0"
+        curr_release_version: str = "1.0.0"
         latest_commit_type: str = CommitType.PATCH
         new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_release_version == "v1.0.1"
+        assert new_release_version == "1.0.1"
 
     def test_increment_release_version_other(self):
-        curr_release_version: str = "v1.0.0"
+        curr_release_version: str = "1.0.0"
         latest_commit_type: str = CommitType.OTHER
         new_release_version: str = self.release_version_updater._increment_release_version(curr_release_version, latest_commit_type)
 
-        assert new_release_version == "v1.0.0"
+        assert new_release_version == "1.0.0"
 
     def test_write_to_github_output(self):
         curr_unix_time: int = int(time.time())
@@ -150,7 +150,7 @@ class TestReleaseVersionUpdater(unittest.TestCase):
         mock_response._content = json.dumps(
             {
                 "name": MOCK_REPO_VARIABLE,
-                "value": "v1.0.0",
+                "value": "1.0.0",
                 "created_at": "2021-08-10T14:59:22Z",
                 "updated_at": "2022-01-10T14:59:22Z"
             }
@@ -166,28 +166,28 @@ class TestReleaseVersionUpdater(unittest.TestCase):
                     repo_owner=MOCK_REPO_OWNER,
                     repo_name=MOCK_REPO_NAME,
                     variable=MOCK_REPO_VARIABLE,
-                    new_value="v2.0.0"
+                    new_value="2.0.0"
                 )
-                assert lines[-1] == "release_version=v2.0.0"
+                assert lines[-1] == "release_version=2.0.0"
             elif latest_commit_type == CommitType.MINOR:
                 self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                     repo_owner=MOCK_REPO_OWNER,
                     repo_name=MOCK_REPO_NAME,
                     variable=MOCK_REPO_VARIABLE,
-                    new_value="v1.1.0"
+                    new_value="1.1.0"
                 )
-                assert lines[-1] == "release_version=v1.1.0"
+                assert lines[-1] == "release_version=1.1.0"
             elif latest_commit_type == CommitType.PATCH:
                 self.release_version_updater.github_client.update_repository_variable.assert_called_once_with(
                     repo_owner=MOCK_REPO_OWNER,
                     repo_name=MOCK_REPO_NAME,
                     variable=MOCK_REPO_VARIABLE,
-                    new_value="v1.0.1"
+                    new_value="1.0.1"
                 )
-                assert lines[-1] == "release_version=v1.0.1"
+                assert lines[-1] == "release_version=1.0.1"
             elif latest_commit_type == CommitType.OTHER:
                 self.release_version_updater.github_client.update_repository_variable.assert_not_called()
-                assert lines[-1] == "release_version=v1.0.0"
+                assert lines[-1] == "release_version=1.0.0"
 
 
 if __name__ == "__main__":
